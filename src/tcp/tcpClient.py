@@ -3,24 +3,24 @@ from socket import AF_INET, SOCK_STREAM
 import sys
 
 LOCAL_HOST = "127.0.0.1"
-port = 12345
+PORT = 12345
 NUM_OF_ACCEPTED_BYTES = 1024
-payload = "Hey Server"
+PAYLOAD = "Hey Server"
 
 # specify port number here?
 clientSocket = socket.socket(family=AF_INET, type=SOCK_STREAM)
-clientSocket.connect((LOCAL_HOST, port))
+clientSocket.connect((LOCAL_HOST, PORT))
 
 
 try:
     while True:
-        clientSocket.send(bytes(payload, 'utf-8'))
+        clientSocket.send(bytes(PAYLOAD, 'utf-8'))
         data = clientSocket.recv(NUM_OF_ACCEPTED_BYTES)
-        print(f"Data from server: {data}")
+        print(f"Data from server: {str(data, encoding='utf-8')}")
 
         more_data_option = input("Want to send more data?:\n\t--> ")
         if more_data_option.lower() == 'y':
-            payload = input("Enter payload:\n\t-->$ ")
+            PAYLOAD = input("Enter payload:\n\t-->$ ")
         else:
             break
 

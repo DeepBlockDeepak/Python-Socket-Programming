@@ -1,16 +1,22 @@
+import argparse
 import socket
-from socket import AF_INET, SOCK_STREAM
+from socket import AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 import sys
+import os
+import threading
+
+NUM_OF_ACCEPTED_BYTES = 1024
+ENCODING = "utf-8"
+
 
 LOCAL_HOST = "127.0.0.1"
-port = 12345
-NUM_OF_ACCEPTED_BYTES = 1024
+PORT = 12345
 NUM_WAITING_CONNECTIONS = 10
 HI_CLIENT_MSG = "Hi there, Client!"
 
 # specify port number here?
 serverSocket = socket.socket(family=AF_INET, type=SOCK_STREAM)
-serverSocket.bind((LOCAL_HOST, port))
+serverSocket.bind((LOCAL_HOST, PORT))
 serverSocket.listen(NUM_WAITING_CONNECTIONS)
 
 while True:
