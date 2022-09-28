@@ -22,7 +22,10 @@ class Send(threading.Thread):
     def run(self):
 
         while True:
+            #print(f"{self.name}: ")
             msg = input(f"{self.name}: ")
+            sys.stdout.flush()
+            # msg = sys.stdin.readline()[:-1]
 
             if msg.lower() == "q" or msg.lower() == "quit":
                 print("Quitting")
@@ -31,8 +34,8 @@ class Send(threading.Thread):
             else:
                 self.sock.sendall(bytes(f"{self.name}: {msg}", encoding=ENCODING))
 
-            self.sock.close()
-            sys.exit()  # os._exit(0)
+        self.sock.close()
+        sys.exit()  # os._exit(0)
 
 
 class Receive(threading.Thread):
@@ -45,10 +48,12 @@ class Receive(threading.Thread):
     def run(self):
 
         while True:
-            msg = self.sock.recv(NUM_OF_ACCEPTED_BYTES)
+            msg = str(self.sock.recv(NUM_OF_ACCEPTED_BYTES), encoding=ENCODING)
+            # msg = self.sock.recv(NUM_OF_ACCEPTED_BYTES).decode(ENCODING)
 
             if msg:
-                print(f"{str(msg, ENCODING)}\n{self.name}:", end="")
+                print(f"\n{msg}\n{self.name}: ", end="")
+                #print(str(msg + "\n" + self.name + ":++ ", encoding=ENCODING))
             else:
                 print("Lost connection to Server")
                 self.sock.close()

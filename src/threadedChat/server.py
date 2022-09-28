@@ -4,15 +4,16 @@ from socket import AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 import sys
 import os
 import threading
+from client import Client
 
 NUM_OF_ACCEPTED_BYTES = 1024
-ENCODING = "utf-8" # or use 'ascii'
+ENCODING = "utf-8"  # or use 'ascii'
 
 
 class Server(threading.Thread):
     def __init__(self, host, port):
         super().__init__()
-        self.connections = [] # list of ServerSocket objects which are active Clients
+        self.connections = []  # list of ServerSocket objects which are active Clients
         self.host = host
         self.port = port
 
@@ -28,12 +29,12 @@ class Server(threading.Thread):
         print(f"Listening at: {serverSock.getsockname()}")
 
         while True:
-
             # waiting for new connection, and then returns a new connected Socket along with its address
             print("Waiting to connect")
             clientSocket, clientAddr = serverSock.accept()
-            print(f"New connection {clientSocket.getpeername()} to {clientSocket.getsockname()} ... Address:{clientAddr}")
-
+            print(
+                f"New connection {clientSocket.getpeername()} to {clientSocket.getsockname()} ... Address:{clientAddr}"
+            )
 
             # make new Thread for communicating with the new client
             server_sock = ServerSocket(clientSocket, clientAddr, self)
@@ -78,12 +79,9 @@ class ServerSocket(threading.Thread):
                 server.remove_connection(self)
                 return
 
-
     def send(self, message):
         # @TODO : possibly for the chat app only??? NOTE: I think this is necessary
         self.clientSocket.sendall(bytes(message, ENCODING))
-
-
 
 
 def exit(server):
@@ -94,7 +92,8 @@ def exit(server):
             for connection in server.connections:
                 connection.clientSocket.close()
             print("Shutting down Server")
-            sys.exit() # os._exit(0)
+            os._exit(0)
+            #sys.exit()  # os._exit(0)
 
 
 if __name__ == "__main__":
@@ -106,7 +105,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '-p',
         metavar='PORT',
-        type = int,
+        type=int,
         default=1060,
         help="TCP port (default 1060)"
     )
@@ -116,14 +115,5 @@ if __name__ == "__main__":
     server = Server(args.host, args.p)
     server.start()
 
-    exit = threading.Thread(target=exit, args = (server,))
+    exit = threading.Thread(target=exit, args=(server,))
     exit.start()
-
-
-
-
-
-
-
-
-
