@@ -13,6 +13,11 @@ ENCODING = "utf-8"  # or use 'ascii'
 class Server(threading.Thread):
     def __init__(self, host, port):
         super().__init__()
+        """
+        TODO: 
+            * Remove 'connections', since multiple connections won't occur yet for this limited app.
+            *  
+        """
         self.connections = []  # list of ServerSocket objects which are active Clients
         self.host = host
         self.port = port
@@ -81,6 +86,7 @@ class ServerSocket(threading.Thread):
 
     def send(self, message):
         # @TODO : possibly for the chat app only??? NOTE: I think this is necessary
+        print("***entered send()***")
         self.clientSocket.sendall(bytes(message, ENCODING))
 
 
@@ -112,8 +118,10 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    # Server B's init will need B's "name" ("NODE_B") as well as it's host and port number
+
     server = Server(args.host, args.p)
     server.start()
 
-    exit = threading.Thread(target=exit, args=(server,))
+    exit = threading.Thread(target=exit, args=[server])
     exit.start()
