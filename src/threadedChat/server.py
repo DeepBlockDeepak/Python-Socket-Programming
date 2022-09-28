@@ -49,6 +49,9 @@ class Server(threading.Thread):
             if connection.clientAddr != source:
                 connection.send(message)
 
+    def remove_connection(self, connection):
+        self.connections.remove(connection)
+
 
 class ServerSocket(threading.Thread):
     def __init__(self, clientSocket, clientAddr, server):

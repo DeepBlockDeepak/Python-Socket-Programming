@@ -9,7 +9,7 @@ LOCAL_HOST = "127.0.0.1"
 PORT = 12345
 NUM_OF_ACCEPTED_BYTES = 1024
 PAYLOAD = "Hey Server"
-ENCODING = "ascii" # or use 'ascii'
+ENCODING = "ascii"  # or use 'ascii'
 
 
 class Send(threading.Thread):
@@ -18,7 +18,6 @@ class Send(threading.Thread):
         super().__init__()
         self.sock = sock
         self.name = name
-
 
     def run(self):
 
@@ -30,10 +29,10 @@ class Send(threading.Thread):
                 self.sock.sendall(bytes(f"Server: {self.name} exited.", encoding=ENCODING))
                 break
             else:
-                self.sock.sendall(bytes(f"{self.name}: {msg}", encoding = ENCODING))
+                self.sock.sendall(bytes(f"{self.name}: {msg}", encoding=ENCODING))
 
             self.sock.close()
-            sys.exit() # os._exit(0)
+            sys.exit()  # os._exit(0)
 
 
 class Receive(threading.Thread):
@@ -53,7 +52,7 @@ class Receive(threading.Thread):
             else:
                 print("Lost connection to Server")
                 self.sock.close()
-                sys.exit() # os._exit()
+                sys.exit()  # os._exit()
 
 
 class Client:
@@ -62,22 +61,23 @@ class Client:
         self.host = host
         self.port = port
         self.sock = socket.socket(AF_INET, SOCK_STREAM)
+        self.name = None
 
     def start(self):
         # connects to the specific address of the server
         self.sock.connect((self.host, self.port))
         print(f"Connected to {self.host}:{self.port}\n")
 
-        name = input("Enter Name:\n\t-->$ ")
+        self.name = input("Enter Name:\n\t-->$ ")
 
-        send = Send(self.sock, name)
-        receive = Receive(self.sock, name)
+        send = Send(self.sock, self.name)
+        receive = Receive(self.sock, self.name)
 
         send.start()
         receive.start()
 
-        self.sock.sendall(bytes(f"Server: {name} joined", encoding= ENCODING))
-        print(f"{name}", end="")
+        self.sock.sendall(bytes(f"Server: {self.name} joined", encoding=ENCODING))
+        # print(f"--{self.name}", end="")
 
 
 if __name__ == '__main__':
