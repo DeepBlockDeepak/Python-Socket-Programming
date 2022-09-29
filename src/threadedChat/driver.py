@@ -1,4 +1,5 @@
 from configuration_file_reader import ConfigurationFileReader
+from client import Client
 
 
 if __name__ == "__main__":

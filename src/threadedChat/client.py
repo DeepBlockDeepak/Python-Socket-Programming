@@ -14,10 +14,10 @@ ENCODING = "utf-8"  # or use 'ascii'
 
 class Send(threading.Thread):
 
-    def __init__(self, sock, name):
+    def __init__(self, sock, message: str):
         super().__init__()
         self.sock = sock
-        self.name = name
+        self.name = message
 
     def run(self):
 
@@ -27,7 +27,7 @@ class Send(threading.Thread):
         """
 
         while True:
-            #print(f"{self.name}: ")
+            # print(f"{self.name}: ")
             msg = input(f"{self.name}: ")
             sys.stdout.flush()
             # msg = sys.stdin.readline()[:-1]
@@ -56,9 +56,9 @@ class Receive(threading.Thread):
             msg = str(self.sock.recv(NUM_OF_ACCEPTED_BYTES), encoding=ENCODING)
             # msg = self.sock.recv(NUM_OF_ACCEPTED_BYTES).decode(ENCODING)
 
-            if msg: # TODO: don't format msg because each msg is line by line
+            if msg:  # TODO: don't format msg because each msg is line by line
                 print(f"\n{msg}\n{self.name}: ", end="")
-                #print(str(msg + "\n" + self.name + ":++ ", encoding=ENCODING))
+                # print(str(msg + "\n" + self.name + ":++ ", encoding=ENCODING))
             else:
                 print("Lost connection to Server")
                 self.sock.close()
@@ -67,35 +67,40 @@ class Receive(threading.Thread):
 
 class Client:
 
-    def __init__(self, host, port):
+    def __init__(self, port: int, message: list(str), host="localhost"):
         self.host = host
         self.port = port
         self.sock = socket.socket(AF_INET, SOCK_STREAM)
-        self.name = None
+        self.message = message
 
     def start(self):
         # connects to the specific address of the server
         self.sock.connect((self.host, self.port))
+
+        """
         print(f"Connected to {self.host}:{self.port}\n")
 
-        self.name = input("Enter Name:\n\t-->$ ")
+        self.message = input("Enter Name:\n\t-->$ ")
+        """
 
-        send = Send(self.sock, self.name)
-        receive = Receive(self.sock, self.name)
+        send = Send(self.sock, self.message)
+        receive = Receive(self.sock, self.message)
 
         send.start()
         receive.start()
 
-        self.sock.sendall(bytes(f"Server: {self.name} joined", encoding=ENCODING))
+        self.sock.sendall(bytes(f"Server: {self.message} joined", encoding=ENCODING))
         # print(f"--{self.name}", end="")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Server')
+    """
     parser.add_argument(
         'host',
         help='Interface the server listens at'
     )
+    """
     parser.add_argument(
         '-p',
         metavar='PORT',
@@ -106,5 +111,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    client = Client(args.host, args.p)
+    client = Client(args.p)
     client.start()

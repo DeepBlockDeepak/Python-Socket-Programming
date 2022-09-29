@@ -86,7 +86,6 @@ class ServerSocket(threading.Thread):
 
     def send(self, message):
         # @TODO : possibly for the chat app only??? NOTE: I think this is necessary
-        print("***entered send()***")
         self.clientSocket.sendall(bytes(message, ENCODING))
 
 
